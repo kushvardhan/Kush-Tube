@@ -19,7 +19,6 @@ const Head = () => {
     <>
       <div className="w-full h-[10vh] bg-zinc-900 text-white px-4 sm:px-8 lg:px-10 gap-6 sm:gap-7 flex items-center justify-between">
         
-        {/* Left Section - Hamburger and Logo */}
         <div className="flex items-center gap-4">
           <RxHamburgerMenu
             onClick={toggleMenuHandler}
