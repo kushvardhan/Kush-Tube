@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const VideoContainer = () => {
     const [videoData, setVideoData] = useState([]);
     const [nextPageToken, setNextPageToken] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     
     const observer = useRef();
 
@@ -41,23 +41,21 @@ const VideoContainer = () => {
     }, [loading, nextPageToken]);
 
     return (
+        <>
         <div className="w-full px-3 py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
             {videoData.map((item, index) => (
                 <div ref={index === videoData.length - 1 ? lastVideoRef : null} key={item.id}>
                     <Card video={item} />
                 </div>
             ))}
-            {loading && (
-    <div className="w-full flex flex-wrap bg-red-900 ">
-        {Array(6).fill(null).map((_, index) => (
-            <Shimmer key={index} />
-        ))}
-    </div>
-)}
+
         </div>
+        {loading && <Shimmer />}
+        </>
     );
 };
 
+// 📌 Format Time Ago
 const formatTimeAgo = (dateString) => {
     const seconds = Math.floor((new Date() - new Date(dateString)) / 1000);
     const intervals = { year: 31536000, month: 2592000, day: 86400, hour: 3600, minute: 60 };
@@ -68,6 +66,7 @@ const formatTimeAgo = (dateString) => {
     return 'Just now';
 };
 
+// 📌 Format Views Count
 const formatViews = (views) => {
     if (views >= 1_000_000_000) return (views / 1_000_000_000).toFixed(1) + "B";
     if (views >= 1_000_000) return (views / 1_000_000).toFixed(1) + "M";
@@ -75,6 +74,7 @@ const formatViews = (views) => {
     return views;
 };
 
+// 📌 Video Card Component
 const Card = ({ video }) => {
     return (
         <Link 
@@ -102,35 +102,34 @@ const Card = ({ video }) => {
     );
 };
 
+// 📌 Shimmer Loader Component (Pure Tailwind)
 const Shimmer = () => {
     return (
-        <div className="w-[100%] px-3 flex justify-around gap-4 overflow-x-hidden overflow-y-hidden bg-red-900">
-
+        <div className="w-[100%] flex flex-wrap items-center gap-4">
+            {Array.from({ length: 6 }).map((_, index) => (
                 <div 
                     key={index} 
-                    className="min-w-[20vw] w-[25vw] h-[20vw] bg-neutral-900 rounded-lg shadow-lg overflow-hidden animate-pulse"
+                    className="w-[100%] bg-zinc-800 max-w-[250px] min-h-[200px] bg-neutral-900 rounded-lg shadow-lg overflow-hidden animate-pulse"
                 >
                     {/* Thumbnail */}
-                    <div className="w-full h-[60%] bg-gray-700 shimmer-effect"></div>
+                    <div className="w-full h-[60%] bg-gray-700 animate-pulse"></div>
 
                     {/* Video Info */}
                     <div className="flex p-3 w-full h-[40%] items-center">
                         {/* Channel Avatar */}
-                        <div className="w-10 h-10 bg-gray-600 rounded-full mr-3 shimmer-effect"></div>
+                        <div className="w-10 h-10 bg-gray-600 rounded-full mr-3 animate-pulse"></div>
 
                         {/* Video Details */}
                         <div className="flex flex-col w-full py-1">
-                            <div className="w-full h-4 bg-gray-600 rounded-md mb-2 shimmer-effect"></div>
-                            <div className="w-3/4 h-3 bg-gray-600 rounded-md mb-2 shimmer-effect"></div>
-                            <div className="w-1/2 h-3 bg-gray-600 rounded-md shimmer-effect"></div>
+                            <div className="w-full h-4 bg-gray-600 rounded-md mb-2 animate-pulse"></div>
+                            <div className="w-3/4 h-3 bg-gray-600 rounded-md mb-2 animate-pulse"></div>
+                            <div className="w-1/2 h-3 bg-gray-600 rounded-md animate-pulse"></div>
                         </div>
                     </div>
                 </div>
+            ))}
         </div>
     );
 };
-
-
-
 
 export default VideoContainer;
