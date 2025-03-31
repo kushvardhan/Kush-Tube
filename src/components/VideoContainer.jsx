@@ -10,14 +10,14 @@ const VideoContainer = () => {
     
     const observer = useRef();
 
-    // Fetch Videos Function
     const getVideoData = async () => {
         if (loading) return;
         setLoading(true);
         try {
             const res = await axios.get(`${YOUTUBE_VIDEO_API}&pageToken=${nextPageToken || ''}`);
-            setVideoData((prev) => [...prev, ...res.data.items]); // Append new data
-            setNextPageToken(res.data.nextPageToken || null); // Save next page token
+            console.log(res.data.items);
+            setVideoData((prev) => [...prev, ...res.data.items]);
+            setNextPageToken(res.data.nextPageToken || null);
         } catch (err) {
             console.error(err.message);
         }
@@ -25,7 +25,7 @@ const VideoContainer = () => {
     };
 
     useEffect(() => {
-        getVideoData(); // Initial Fetch
+        getVideoData(); 
     }, []);
 
     // Infinite Scroll Observer
@@ -43,11 +43,12 @@ const VideoContainer = () => {
     return (
         <>
         <div className="w-full px-3 py-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
-            {videoData.map((item, index) => (
-                <div ref={index === videoData.length - 1 ? lastVideoRef : null} key={item.id}>
-                    <Card video={item} />
-                </div>
-            ))}
+        {videoData.map((item, index) => (
+    <div ref={index === videoData.length - 1 ? lastVideoRef : null} key={`${item.id}-${index}`}>
+        <Card video={item} />
+    </div>
+))}
+
 
         </div>
         {loading && <Shimmer />}
@@ -84,7 +85,7 @@ const Card = ({ video }) => {
             className="w-full max-w-[350px] max-h-[220px] bg-neutral-950 rounded-lg shadow-lg overflow-hidden text-gray-300"
         >
             <div className="w-full h-[60%] aspect-video">
-                <img src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} className="w-full h-full object-cover"/>
+                <img title={video.snippet.channelTitle} src={video.snippet.thumbnails.medium.url} alt={video.snippet.title} className="w-full h-full object-cover"/>
             </div>
             <div className="flex p-3 w-full h-[40%] items-center">
                 <img src={"https://4kwallpapers.com/images/wallpapers/kanye-west-5k-blue-3840x2160-15452.jpg"} alt={video.snippet.channelTitle} className="w-10 h-10 rounded-full mr-3"/>
@@ -92,7 +93,7 @@ const Card = ({ video }) => {
                     <h2 className="text-sm md:text-[1.3vw] font-semibold line-clamp-2" title={video.snippet.title}>
                         {video.snippet.title}
                     </h2>
-                    <p className="text-xs md:text-[1.1vw] text-gray-400">{video.snippet.channelTitle}</p>
+                    <p className="text-xs md:text-[1.1vw] text-gray-400" title={video.snippet.channelTitle}>{video.snippet.channelTitle}</p>
                     <p className="text-xs md:text-[1.2vw] text-gray-400">
                         {formatViews(parseInt(video.statistics.viewCount))} views • {formatTimeAgo(video.snippet.publishedAt)}
                     </p>
